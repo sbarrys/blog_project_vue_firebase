@@ -45,38 +45,65 @@
       absolute
       temporary
     >
-      <v-list
-        nav
-        dense
+    <v-list>
+      <v-list-group
+        v-for="item in item"
+        :key="item.title"
+        v-model="item.active"
+        no-action
       >
-        <v-list-item-group
-          v-model="group"
-          active-class="deep-purple--text text--accent-4"
+        <template v-slot:activator>
+          <v-list-item-content>
+            <v-list-item-title v-text="item.title"></v-list-item-title>
+          </v-list-item-content>
+        </template>
+
+        <v-list-item
+          v-for="subItem in item.items"
+          :key="subItem.title"
         >
-          <v-list-item>
-            <v-list-item-icon>
-              <v-icon>mdi-home</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Home</v-list-item-title>
-          </v-list-item>
-
-          <v-list-item>
-            <v-list-item-icon>
-              <v-icon>mdi-account</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Account</v-list-item-title>
-          </v-list-item>
-
-        </v-list-item-group>
-      </v-list>
+          <v-list-item-content>
+            <v-list-item-title v-text="subItem.title"></v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list-group>
+    </v-list>
     </v-navigation-drawer>
 
   </div>
 </template>
+
 <script>
+
 export default {
   data: () => ({
-    drawer: false
+    group: true,
+    drawer: false,
+    item: [
+      {
+        title: 'Home',
+        items: [
+          { title: 'index page' }
+        ]
+      }, {
+        title: 'V-logs',
+        active: true,
+        items: [
+          { title: '2018 -' },
+          { title: '2019 -' },
+          { title: '2020 - ing' }
+        ]
+      },
+      {
+        title: 'Dev',
+        active: true,
+        items: [
+          { title: 'android' },
+          { title: 'Vue.js' },
+          { title: 'Spring' }
+        ]
+      }
+    ]
   })
 }
 </script>

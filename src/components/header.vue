@@ -4,10 +4,24 @@
       color="primary lighten-1"
       dark
     >
-      <v-app-bar-nav-icon @click="drawer=true"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon @click="drawer=!drawer"></v-app-bar-nav-icon>
 
-      <v-toolbar-title>{{title}}</v-toolbar-title>
+      <v-toolbar-title>{{title}}
+      <v-btn icon @click="openDialog"><v-icon>mdi-grease-pencil</v-icon></v-btn>
+      <v-dialog v-model="dialog" max-width="400">
+        <v-card>
+          <v-card-title>
+            제목수정
+                    <v-spacer/>
+        <v-btn icon @click="dialog=false"><v-icon>mdi-close</v-icon></v-btn>
+        <v-btn icon @click="save"><v-icon>mdi-content-save</v-icon></v-btn>
 
+        </v-card-title>
+        <v-card-text>
+        <v-text-field v-model="text" outlined label="제목" @keypress.enter="save"    />
+        </v-card-text></v-card>
+      </v-dialog>
+</v-toolbar-title>
       <v-spacer></v-spacer>
 <!-- 저장-->
 
@@ -47,36 +61,7 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-<DrawerMenu :drawer="drawer"></DrawerMenu>
-        <!-- <v-navigation-drawer
-      v-model="drawer"
-      absolute
-      temporary
-    >
-    <v-list>
-      <v-list-group
-        v-for="item in item"
-        :key="item.title"
-        v-model="item.active"
-        no-action
-      >
-        <template v-slot:activator>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.title"></v-list-item-title>
-          </v-list-item-content>
-        </template>
-
-        <v-list-item
-          v-for="subItem in item.items"
-          :key="subItem.title"
-        >
-          <v-list-item-content>
-            <v-list-item-title v-text="subItem.title"></v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list-group>
-    </v-list>
-    </v-navigation-drawer> -->
+      <DrawerMenu :drawer="drawer" :items="items"></DrawerMenu>
 
   </div>
 </template>
@@ -85,54 +70,69 @@
 import DrawerMenu from './drawerMenu'
 export default {
   components: { DrawerMenu },
-  props: ['title'],
+  props: ['title', 'items'],
   methods: {
-    save () {
-      console.log('clicked save')
-      this.$firebase.database().ref().child('Post').set({
-        title: 'title1', text: 'text1'
-      })
+    openDialog () {
+      this.dialog = true
+    },
+    async save () {
+      try {
+        this.$firebase.database().ref().child('site').update({
+          title: this.text
+        })
+      } catch (e) {
+        console.log(e.message)
+      } finally {
+        this.dialog = false
+      }
     },
     listeningg () {
-      this.$firebase.database().ref().child('Post').on('value', function (snapshot) {
+      this.$firebase.database().ref().on('value', function (snapshot) {
         console.log(snapshot.val())
-      }
-      )
+      })
     },
+
     async onceListen () {
-      const sn = await this.$firebase.database().ref().child('Post').once('value')
+      const sn = await this.$firebase.database().ref().child('site').once('value')
       console.log(sn.val())
     }
   },
-  data: () => ({
-    group: true,
-    drawer: false,
-    item: [
-      {
-        title: 'Home',
-        items: [
-          { title: 'index page' }
-        ]
-      }, {
-        title: 'V-logs',
-        active: true,
-        items: [
-          { title: '2018 -' },
-          { title: '2019 -' },
-          { title: '2020 - ing' }
-        ]
-      },
-      {
-        title: 'Dev',
-        active: true,
-        items: [
-          { title: 'android' },
-          { title: 'Vue.js' },
-          { title: 'Spring' }
-        ]
-      }
-    ]
-  })
+  data () {
+    return {
+
+      text: this.title,
+      dialog: false,
+      group: true,
+      drawer: false,
+
+      item: [
+        {
+          title: 'Home',
+          items: [
+            { title: 'index page' }
+          ]
+        }, {
+          title: 'V-logs',
+          active: true,
+          items: [
+            { title: '2018 -' },
+            { title: '2019 -' },
+            { title: '2020 - ing' }
+          ]
+        },
+        {
+          title: 'Dev',
+          active: true,
+          items: [
+            { title: 'android' },
+            { title: 'Vue.js' },
+            { title: 'Spring' }
+          ]
+        }
+      ]
+
+    }
+  }
 }
 
 </script>

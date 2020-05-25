@@ -1,9 +1,9 @@
 <template>
   <v-app>
-    <Header/>
+    <Header :title="site.title"/>
+    <Content :items="site.menu"/>
 
-<Content/>
-    <Footer></Footer>
+    <Footer :footer="site.footer"></Footer>
   </v-app>
 </template>
 
@@ -12,6 +12,7 @@ import Header from './components/header'
 import Footer from './components/footer'
 import Content from './components/content'
 export default {
+
   name: 'App',
 
   components: {
@@ -19,8 +20,23 @@ export default {
     Footer,
     Header
   },
-  data: () => ({
+  data: () => {
+    return {
+      site: {
+        menu: [],
+        title: 'App.vue에서 보내고 Props로 받아준 타이틀입니다.',
+        footer: 'App.vue에서 보내고 Props로 받아준 푸터입니다'
+      }
+    }
     //
-  })
+  },
+  mounted () {
+    console.log(this.$firebase)
+  },
+  methods: {
+
+  }
+
 }
+
 </script>

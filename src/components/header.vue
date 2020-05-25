@@ -6,15 +6,23 @@
     >
       <v-app-bar-nav-icon @click="drawer=true"></v-app-bar-nav-icon>
 
-      <v-toolbar-title>Page title</v-toolbar-title>
+      <v-toolbar-title>{{title}}</v-toolbar-title>
 
       <v-spacer></v-spacer>
+<!-- 저장-->
 
-      <v-btn icon>
-        <v-icon>mdi-heart</v-icon>
+      <v-btn icon @click="save">
+        <v-icon>mdi-check</v-icon>
       </v-btn>
 
-      <v-btn icon>
+<!-- 계속 리스닝 하게 만듬 -->
+
+      <v-btn icon @click="listeningg">
+        <v-icon>mdi-numeric</v-icon>
+      </v-btn>
+
+<!-- 새로고침 (한번만 가져옴)-->
+    <v-btn icon @click="onceListen">
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
 
@@ -39,8 +47,8 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-
-        <v-navigation-drawer
+<DrawerMenu :drawer="drawer"></DrawerMenu>
+        <!-- <v-navigation-drawer
       v-model="drawer"
       absolute
       temporary
@@ -68,14 +76,34 @@
         </v-list-item>
       </v-list-group>
     </v-list>
-    </v-navigation-drawer>
+    </v-navigation-drawer> -->
 
   </div>
 </template>
 
 <script>
-
+import DrawerMenu from './drawerMenu'
 export default {
+  components: { DrawerMenu },
+  props: ['title'],
+  methods: {
+    save () {
+      console.log('clicked save')
+      this.$firebase.database().ref().child('Post').set({
+        title: 'title1', text: 'text1'
+      })
+    },
+    listeningg () {
+      this.$firebase.database().ref().child('Post').on('value', function (snapshot) {
+        console.log(snapshot.val())
+      }
+      )
+    },
+    async onceListen () {
+      const sn = await this.$firebase.database().ref().child('Post').once('value')
+      console.log(sn.val())
+    }
+  },
   data: () => ({
     group: true,
     drawer: false,
@@ -106,4 +134,5 @@ export default {
     ]
   })
 }
+
 </script>

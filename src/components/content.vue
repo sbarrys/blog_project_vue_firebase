@@ -7,6 +7,7 @@
 </template>
 <script>
 export default {
+  props: ['items'],
   data: function () {
     return {
       sixty: 60

@@ -30,11 +30,9 @@ export default {
   methods: {
     async save () {
       try {
-        this.$firebase.database().ref().child('site').update({
+        await this.$firebase.database().ref().child('site').update({
           footer: this.text
         })
-      } catch (e) {
-        console.log(e.message)
       } finally {
         this.dialog = false
       }
